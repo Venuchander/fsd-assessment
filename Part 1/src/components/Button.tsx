@@ -2,37 +2,39 @@ import { forwardRef } from "react";
 import type { ButtonProps } from "./Button.types";
 
 const variantClasses: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  primary: "bg-blue-600 text-white hover:bg-blue-700 border-transparent",
-  secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 border-transparent",
-  ghost: "bg-transparent text-gray-700 hover:bg-gray-100 border-gray-300",
-  danger: "bg-red-600 text-white hover:bg-red-700 border-transparent",
+  primary:
+    "bg-white text-black hover:bg-neutral-200 border-transparent",
+  secondary:
+    "bg-neutral-800 text-neutral-100 hover:bg-neutral-700 border-neutral-700",
+  ghost:
+    "bg-transparent text-neutral-400 hover:bg-neutral-800 hover:text-neutral-100 border-neutral-700",
+  danger:
+    "bg-red-500/10 text-red-400 hover:bg-red-500/20 border-red-500/30",
 };
 
 const sizeClasses: Record<NonNullable<ButtonProps["size"]>, string> = {
-  sm: "px-3 py-1.5 text-sm gap-1.5",
-  md: "px-4 py-2 text-sm gap-2",
-  lg: "px-5 py-2.5 text-base gap-2",
+  sm: "px-3 py-1.5 text-xs gap-1.5 rounded-md",
+  md: "px-4 py-2 text-sm gap-2 rounded-lg",
+  lg: "px-5 py-2.5 text-sm gap-2.5 rounded-lg",
 };
 
 const Spinner = () => (
   <svg
-    className="animate-spin h-4 w-4 shrink-0"
+    className="animate-spin shrink-0"
+    style={{ width: "14px", height: "14px" }}
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
     aria-hidden="true"
   >
     <circle
-      className="opacity-25"
-      cx="12"
-      cy="12"
-      r="10"
-      stroke="currentColor"
-      strokeWidth="4"
+      cx="12" cy="12" r="10"
+      stroke="currentColor" strokeWidth="3"
+      style={{ opacity: 0.25 }}
     />
     <path
-      className="opacity-75"
       fill="currentColor"
+      style={{ opacity: 0.8 }}
       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
     />
   </svg>
@@ -52,14 +54,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const base =
-      "inline-flex items-center justify-center font-medium rounded-md border transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+      "inline-flex items-center justify-center font-medium border transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-1 focus-visible:ring-offset-black disabled:opacity-40 disabled:pointer-events-none tracking-tight";
 
-    const classes = [
-      base,
-      variantClasses[variant],
-      sizeClasses[size],
-      className,
-    ]
+    const classes = [base, variantClasses[variant], sizeClasses[size], className]
       .join(" ")
       .trim();
 

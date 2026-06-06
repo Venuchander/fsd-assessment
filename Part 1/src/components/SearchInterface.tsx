@@ -16,6 +16,8 @@ const MOCK_DATA: SearchResult[] = [
   { id: 6, title: "debounce vs throttle" },
   { id: 7, title: "localstorage" },
   { id: 8, title: "jwt auth" },
+  { id: 9, title: "vite build optimization" },
+  { id: 10, title: "css container queries" },
 ];
 
 function SearchInterface() {
@@ -28,55 +30,87 @@ function SearchInterface() {
   useEffect(() => {
     if (!debouncedQuery.trim()) {
       setResults([]);
-      setIsSearching(false);
       return;
     }
-
     setIsSearching(true);
-
-    const filtered = MOCK_DATA.filter((item) =>
-      item.title.toLowerCase().includes(debouncedQuery.toLowerCase())
-    );
-    setResults(filtered);
-    setIsSearching(false);
+    const timeout = setTimeout(() => {
+      setResults(
+        MOCK_DATA.filter((item) =>
+          item.title.toLowerCase().includes(debouncedQuery.toLowerCase())
+        )
+      );
+      setIsSearching(false);
+    }, 300);
+    return () => clearTimeout(timeout);
   }, [debouncedQuery]);
 
   return (
-    <div className="max-w-xl mx-auto mt-12 p-6 space-y-4">
-      <h1 className="text-2xl font-semibold text-gray-900">Search</h1>
+    <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center px-4">
+      <div className="w-full max-w-lg">
 
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search articles..."
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <Button variant="ghost" size="md" onClick={() => clearQuery()}>
-          Clear
-        </Button>
+        <h1 className="text-white text-2xl font-semibold tracking-tight text-center mb-6">
+          Search
+        </h1>
+
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <svg
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-600"
+              width="14" height="14" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" strokeWidth="2"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search articles..."
+              className="w-full bg-neutral-900 border border-neutral-800 text-neutral-100 placeholder-neutral-600 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-neutral-600 transition-all"
+            />
+          </div>
+          {query && (
+            <Button variant="ghost" size="md" onClick={() => clearQuery()}>
+              Clear
+            </Button>
+          )}
+        </div>
+
+        <div className="mt-1.5 h-5 flex items-center px-1">
+          {isSearching && (
+            <Button variant="ghost" size="sm" isLoading>
+              Searching
+            </Button>
+          )}
+          {!isSearching && debouncedQuery && (
+            <span className="text-xs text-neutral-600">
+              {results.length} result{results.length !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+
+        {!isSearching && results.length > 0 && (
+          <ul className="mt-2 border border-neutral-800 rounded-xl overflow-hidden divide-y divide-neutral-800/60">
+            {results.map((item) => (
+              <li
+                key={item.id}
+                className="px-4 py-3 text-sm text-neutral-300 hover:text-white hover:bg-neutral-900 transition-colors"
+              >
+                {item.title}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {!isSearching && debouncedQuery && results.length === 0 && (
+          <p className="mt-4 text-center text-sm text-neutral-600">
+            No results for "{debouncedQuery}"
+          </p>
+        )}
+
       </div>
-
-      {isSearching && (
-        <Button variant="primary" size="sm" isLoading>
-          Searching
-        </Button>
-      )}
-
-      {!isSearching && results.length > 0 && (
-        <ul className="divide-y divide-gray-100 border border-gray-200 rounded-md overflow-hidden">
-          {results.map((item) => (
-            <li key={item.id} className="px-4 py-3 text-sm text-gray-800 hover:bg-gray-50">
-              {item.title}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {!isSearching && debouncedQuery && results.length === 0 && (
-        <p className="text-sm text-gray-500">No results for "{debouncedQuery}".</p>
-      )}
     </div>
   );
 }
